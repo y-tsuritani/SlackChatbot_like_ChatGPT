@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "slackbot-like-chatgpt"
+version = "0.1.0"
+description = ""
+authors = ["Yuji Tsuritani <ykt.tsuriya@gmail.com>"]
+readme = "README.md"
+packages = [{include = "slackbot_like_chatgpt"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+openai = "^0.26.4"
+slack-bolt = "^1.16.1"
+functions-framework = "^3.3.0"
+
+
+[tool.poetry.group.dev.dependencies]
+autopep8 = "^2.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
