@@ -1,27 +1,28 @@
+// 1. バックエンドをローカルで管理する場合の記述
 terraform {
-  backend "local" {}
+#   backend "local" {}
 
 
-// バックエンドをGCSで管理する場合のの記述 //
+// 2. バックエンドをGCSで管理する場合の記述 //
 
-#   backend "gcs" {
-#     bucket = "app-terraform-backend-state"
-#   }
-# }
+  backend "gcs" {
+    bucket = "app-terraform-backend-state"
+    prefix  = "dev/state"
+  }
+}
+resource "google_storage_bucket" "terraform_state" {
+  name     = "app-terraform-backend-state"
+  location = var.region
+  versioning {
+    enabled = true
+  }
 
-# resource "google_storage_bucket" "terraform_state" {
-#   name     = "app-terraform-backend-state"
-#   location = var.region
-#   versioning {
-#     enabled = true
-#   }
-
-#   lifecycle_rule {
-#     action {
-#       type = "Delete"
-#     }
-#     condition {
-#       num_newer_versions = 20
-#     }
-#   }
+  lifecycle_rule {
+    action {
+      type = "Delete"
+    }
+    condition {
+      num_newer_versions = 20
+    }
+  }
 }

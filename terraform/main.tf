@@ -7,7 +7,7 @@ provider "google" {
 resource "google_service_account" "func_service_account" {
   account_id   = "sa-name"
   display_name = "sa_name"
-  project      = var.project_name
+  project      = var.project_id
   description  = "Cloud Functions が使用するサービスアカウント"
 }
 

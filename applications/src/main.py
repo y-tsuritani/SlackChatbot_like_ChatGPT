@@ -5,8 +5,7 @@ import functions_framework
 import openai
 from slack_bolt import App
 
-token = "xoxb-3470110323764-4706232038646-5ciLXItAcC1Ylft8RQHffEeh"
-# token = os.getenv()
+token = os.getenv("SLACK_APP_TOKEN")
 app = App(token=token)
 
 
@@ -26,8 +25,7 @@ def handle_message(ack, event):
     ack("Got your message!")
 
     # Use the API Key to create an OpenAI client
-    api_key = "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"
-    # api_key = os.getenv()
+    api_key = os.getenv("OPENAI_API_KEY")
     openai.api_key = api_key
 
     # Use the client to generate a response from ChatGPT
