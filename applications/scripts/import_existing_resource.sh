@@ -4,12 +4,15 @@
 suffix = "dev"
 
 # GCS bucket name
-gcs_buckets = ("fm-backet-${suffix}", "gim-terraform-backend-state-${suffix}", "gim-deploy-cloud-functions")
+gcs_buckets = ("app-terraform-backend-state-${suffix}", "gim-deploy-cloud-functions")
 
 # import service account
-terraform import google_service_account.workflows_service_account workflows-sa@facility-master.iam.gserviceaccount.com
+terraform import google_service_account.func_service_account sa-name@gcp-engineering-358313.iam.gserviceaccount.com
 
-# Import GCS Bucket
+# Import tfstate GCS Bucket
+terraform import google_storage_bucket.terraform_state app-terraform-backend
+
+# Import GCS Bucket for loop
 for bucket in "${gcs_buckets[@]}"
 do
   terraform import google_storage_bucket.${bucket} ${bucket}

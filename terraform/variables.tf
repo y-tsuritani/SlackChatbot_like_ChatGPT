@@ -5,7 +5,7 @@ variable "project_id" {
 
 variable "region" {
   description = "region"
-  default     = "us-central1"
+  default     = "asia-northeast1"
 }
 
 variable "function_name" {
@@ -18,7 +18,7 @@ variable "function-name" {
   default     = "slackbot-chatgpt"
 }
 
-variable "env_code" {
+variable "env" {
   description = "select environment"
   default = "dev"
 }

@@ -28,7 +28,7 @@ resource "google_storage_bucket" "src_cloud_functions" {
 }
 # Cloud Functions ソースコード GCS オブジェクトの作成
 resource "google_storage_bucket_object" "source_object_zip" {
-  name   = "/${var.env}/${var.function_name}_${data.archive_file.source_file_zip.output_md5}.zip"
+  name   = "${var.env}/${var.function_name}_${data.archive_file.source_file_zip.output_md5}.zip"
   bucket = google_storage_bucket.src_cloud_functions.name
   source = data.archive_file.source_file_zip.output_path
 }
@@ -56,7 +56,7 @@ resource "google_cloudfunctions2_function" "function" {
   # ソースコード、言語、エントリーポイントを指定
   build_config {
     runtime     = "python310"
-    entry_point = "run"
+    entry_point = "verify"
     source {
       storage_source {
         bucket = google_storage_bucket.src_cloud_functions.name
@@ -70,19 +70,19 @@ resource "google_cloudfunctions2_function" "function" {
     available_memory      = "512Mi"
     timeout_seconds       = 300
     service_account_email = google_service_account.func_service_account.email
-    environment_variables = yamldecode(file("../applications/env/.env.yaml"))
+    # environment_variables = yamldecode(file("../applications/env/.env.yaml"))
 
       # secret managerから情報を取得
     secret_environment_variables {
       key        = "SLACK_APP_TOKEN"
-      project_id = var.project_name
+      project_id = var.project_id
       secret     = data.google_secret_manager_secret.SLACK_APP_TOKEN.secret_id
       version    = "latest"
     }
 
     secret_environment_variables {
       key        = "OPENAI_API_KEY"
-      project_id = var.project_name
+      project_id = var.project_id
       secret     = data.google_secret_manager_secret.OPENAI_API_KEY.secret_id
       version    = "latest"
     }

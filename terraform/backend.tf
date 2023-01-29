@@ -6,12 +6,12 @@ terraform {
 // 2. バックエンドをGCSで管理する場合の記述 //
 
   backend "gcs" {
-    bucket = "app-terraform-backend-state"
-    prefix  = "dev/state"
+    bucket = "app-terraform-backend"
+    prefix  = "slackbot_chatgpt/state"
   }
 }
 resource "google_storage_bucket" "terraform_state" {
-  name     = "app-terraform-backend-state"
+  name     = "app-terraform-backend"
   location = var.region
   versioning {
     enabled = true
