@@ -35,12 +35,17 @@ resource "google_storage_bucket_object" "source_object_zip" {
 
 #### Cloud Functions 関連（Secret Manager で管理している情報を環境変数として利用するための記述）
 
-# secret manager からSLACK_APP_TOKENを取得する
+# secret manager から SLACK_SIGNING_SECRET を取得する
+data "google_secret_manager_secret" "SLACK_SIGNING_SECRET" {
+  secret_id = "SLACK_SIGNING_SECRET"
+}
+
+# secret manager から SLACK_APP_TOKEN を取得する
 data "google_secret_manager_secret" "SLACK_APP_TOKEN" {
   secret_id = "SLACK_APP_TOKEN"
 }
 
-# secret manager からOPENAI_API_KEYを取得する
+# secret manager から OPENAI_API_KEY を取得する
 data "google_secret_manager_secret" "OPENAI_API_KEY" {
   secret_id = "OPENAI_API_KEY"
 }
@@ -73,6 +78,12 @@ resource "google_cloudfunctions2_function" "function" {
     # environment_variables = yamldecode(file("../applications/env/.env.yaml"))
 
       # secret managerから情報を取得
+    secret_environment_variables {
+      key        = "SLACK_SIGNING_SECRET"
+      project_id = var.project_id
+      secret     = data.google_secret_manager_secret.SLACK_SIGNING_SECRET.secret_id
+      version    = "latest"
+    }
     secret_environment_variables {
       key        = "SLACK_APP_TOKEN"
       project_id = var.project_id
