@@ -1,6 +1,7 @@
+import json
 import os
 
-import functions.framework
+import functions_framework
 import openai
 from slack_bolt import App
 
@@ -10,9 +11,14 @@ app = App(token=token)
 
 
 @functions_framework.http
-def run(request):
-    pass
-    return None
+def verify(request):
+    headers = {"Content-Type": "application/json"}
+    body = request.get_json()
+    if body.get("type") == "url_verification":
+        res = json.dumps({"challenge": body["challenge"]})
+        return (res, 200, headers)
+
+    return ("{}", 400, headers)
 
 
 @app.message("hello")
