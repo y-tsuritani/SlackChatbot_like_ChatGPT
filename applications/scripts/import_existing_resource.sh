@@ -4,7 +4,7 @@
 suffix = "dev"
 
 # GCS bucket name
-gcs_buckets = ("app-terraform-backend-state-${suffix}", "gim-deploy-cloud-functions")
+gcs_buckets = ("app-terraform-backend-state-${suffix}", "app-deploy-cloud-functions")
 
 # import service account
 terraform import google_service_account.func_service_account sa-name@gcp-engineering-358313.iam.gserviceaccount.com
