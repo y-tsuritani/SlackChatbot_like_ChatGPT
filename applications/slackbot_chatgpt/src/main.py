@@ -7,6 +7,7 @@ import functions_framework
 import google.cloud.logging
 import openai
 from slack_bolt import App
+from flask import Request
 
 # Google Cloud Logging クライアント ライブラリを設定
 logging_client = google.cloud.logging.Client()
@@ -18,7 +19,7 @@ app = App(token=token)
 
 
 @functions_framework.http
-def verify(request):
+def verify(request: Request):
     """_summary_
 
     Args:
@@ -29,18 +30,30 @@ def verify(request):
     """
     headers = {"Content-Type": "application/json"}
     body = request.get_json()
-    pprint(body)
+    logging.debug(type(body))
+    logging.debug(f"body: {body}")
     if body.get("type") == "url_verification":
         res = json.dumps({"challenge": body["challenge"]})
-        pprint(res)
+        logging.debug(f"res: {res}")
         return (res, 200, headers)
-    pprint("No url_verification")
-    pprint(headers)
+    elif body.get("type") == "event_callback":
+        event = body.get("event")
+        user = event.get("user")
+        blocks = event.get("blocks")
+        text = blocks["elements"]["elements"]["text"]
+        logging.debug(f"text: {text}")
+    logging.debug(f"headers: {headers}")
     return ("{}", 400, headers)
 
 
 @app.message("hello")
 def handle_message(ack, event):
+    """_summary_
+
+    Args:
+        ack (_type_): _description_
+        event (_type_): _description_
+    """
     ack("Got your message!")
 
     # Use the API Key to create an OpenAI client

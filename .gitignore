@@ -1,5 +1,7 @@
 # secret
 applications/secret/secret.yaml
+*.json
+*.zip
 
 # vscode
 .vscode
