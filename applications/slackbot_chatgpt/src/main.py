@@ -1,13 +1,12 @@
 import json
 import logging
 import os
-from pprint import pprint
 
 import functions_framework
 import google.cloud.logging
 import openai
+from flask import Request, jsonify
 from slack_bolt import App
-from flask import Request
 
 # Google Cloud Logging クライアント ライブラリを設定
 logging_client = google.cloud.logging.Client()
@@ -19,7 +18,7 @@ app = App(token=token)
 
 
 @functions_framework.http
-def verify(request: Request):
+def verify(request: Request) -> tuple:
     """_summary_
 
     Args:
@@ -37,13 +36,13 @@ def verify(request: Request):
         logging.debug(f"res: {res}")
         return (res, 200, headers)
     elif body.get("type") == "event_callback":
-        event = body.get("event")
-        user = event.get("user")
-        blocks = event.get("blocks")
-        text = blocks["elements"]["elements"]["text"]
+        json_body = jsonify(body)
+        user = json_body.json()["event"]["user"]
+        text = json_body.json()["event"]["blocks"]["elements"]["elements"]["text"]
+        logging.debug(f"user: {user}")
         logging.debug(f"text: {text}")
     logging.debug(f"headers: {headers}")
-    return ("{}", 400, headers)
+    return ("{}", 200, jsonify({'user': user, 'text': text}))
 
 
 @app.message("hello")
