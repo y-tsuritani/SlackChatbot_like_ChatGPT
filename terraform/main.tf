@@ -61,7 +61,7 @@ resource "google_cloudfunctions2_function" "function" {
   # ソースコード、言語、エントリーポイントを指定
   build_config {
     runtime     = "python310"
-    entry_point = "verify"
+    entry_point = "run"
     source {
       storage_source {
         bucket = google_storage_bucket.src_cloud_functions.name
