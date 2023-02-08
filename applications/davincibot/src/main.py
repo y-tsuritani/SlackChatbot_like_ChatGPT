@@ -5,8 +5,8 @@ import os
 import functions_framework
 import google.cloud.logging
 import openai
-import requests
-from flask import Flask, jsonify, request
+# import requests
+from flask import Flask, jsonify, Request
 
 # Google Cloud Logging クライアント ライブラリを設定
 logging_client = google.cloud.logging.Client()
@@ -21,7 +21,7 @@ app = Flask(__name__)
 
 
 @functions_framework.http
-def handler(request: request) -> dict:
+def handler(req: Request) -> dict:
     """_summary_
 
     Args:
@@ -31,13 +31,14 @@ def handler(request: request) -> dict:
     Returns:
         _type_: _description_
     """
-    body = request.get_json()
+    header = req.headers()
+    body = req.get_json()
     if body.get("type") == "url_verification":
         headers = {"Content-Type": "application/json"}
         res = json.dumps({"challenge": body["challenge"]})
         logging.debug(f"res: {res}")
         return (res, 200, headers)
-    elif "x-slack-retry-num" in request.headers["headers"]:
+    elif header.get("x-slack-retry-num"):
         return jsonify({
             "statusCode": 200,
             "body": json.dumps({"message": "No need to resend"})
