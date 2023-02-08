@@ -7,7 +7,7 @@ terraform {
 
   backend "gcs" {
     bucket = "app-terraform-backend"
-    prefix  = "slackbot_chatgpt/state"
+    prefix  = "davincibot/state"
   }
 }
 resource "google_storage_bucket" "terraform_state" {

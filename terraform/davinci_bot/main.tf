@@ -15,8 +15,8 @@ resource "google_service_account" "func_service_account" {
 # Cloud Functions デプロイ用にソースコード zip ファイルを作成
 data "archive_file" "source_file_zip" {
   type        = "zip"
-  source_dir  = "../applications/${var.function_name}/src"
-  output_path = "../applications/${var.function_name}/${var.function_name}.zip"
+  source_dir  = "../../applications/${var.function_name}/src"
+  output_path = "../../applications/${var.function_name}/${var.function_name}.zip"
 }
 
 #### Cloud Functions 関連（デプロイ用 GCS バケット、オブジェクトの作成）
@@ -41,8 +41,8 @@ data "google_secret_manager_secret" "SLACK_SIGNING_SECRET" {
 }
 
 # secret manager から SLACK_APP_TOKEN を取得する
-data "google_secret_manager_secret" "SLACK_APP_TOKEN" {
-  secret_id = "SLACK_APP_TOKEN"
+data "google_secret_manager_secret" "SLACK_BOT_TOKEN" {
+  secret_id = "SLACK_BOT_TOKEN"
 }
 
 # secret manager から OPENAI_API_KEY を取得する
@@ -54,14 +54,14 @@ data "google_secret_manager_secret" "OPENAI_API_KEY" {
 #### Cloud Functions 関連（各関数をデプロイ）
 # アプリケーション を Cloud Functions へデプロイ
 resource "google_cloudfunctions2_function" "function" {
-  name        = var.function-name
+  name        = var.function_name
   location    = var.region
-  description = "deploy ${var.function-name}"
+  description = "deploy ${var.function_name}"
 
   # ソースコード、言語、エントリーポイントを指定
   build_config {
     runtime     = "python310"
-    entry_point = "run"
+    entry_point = "handler"
     source {
       storage_source {
         bucket = google_storage_bucket.src_cloud_functions.name
@@ -85,9 +85,9 @@ resource "google_cloudfunctions2_function" "function" {
       version    = "latest"
     }
     secret_environment_variables {
-      key        = "SLACK_APP_TOKEN"
+      key        = "SLACK_BOT_TOKEN"
       project_id = var.project_id
-      secret     = data.google_secret_manager_secret.SLACK_APP_TOKEN.secret_id
+      secret     = data.google_secret_manager_secret.SLACK_BOT_TOKEN.secret_id
       version    = "latest"
     }
 

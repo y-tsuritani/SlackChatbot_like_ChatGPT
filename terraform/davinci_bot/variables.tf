@@ -9,13 +9,8 @@ variable "region" {
 }
 
 variable "function_name" {
-  description = "my function name(_)"
-  default     = "slackbot_chatgpt"
-}
-
-variable "function-name" {
-  description = "my function name(-)"
-  default     = "slackbot-chatgpt"
+  description = "my function name"
+  default     = "davincibot"
 }
 
 variable "env" {
