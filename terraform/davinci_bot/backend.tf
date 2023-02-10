@@ -1,17 +1,17 @@
 terraform {
 
-// 1. バックエンドをローカルで管理する場合の記述
-#   backend "local" {}
+  // 1. バックエンドをローカルで管理する場合の記述
+  #   backend "local" {}
 
-// 2. バックエンドをGCSで管理する場合の記述 //
+  // 2. バックエンドをGCSで管理する場合の記述 //
 
   backend "gcs" {
-    bucket = "app-terraform-backend"
-    prefix  = "davincibot/state"
+    bucket = "davincibot-terraform-backend"
+    prefix = "davincibot/state"
   }
 }
 resource "google_storage_bucket" "terraform_state" {
-  name     = "app-terraform-backend"
+  name     = "davincibot-terraform-backend"
   location = var.region
   versioning {
     enabled = true

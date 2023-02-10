@@ -1,6 +1,6 @@
 variable "project_id" {
   description = "GCP project id"
-  default     = "gcp-engineering-358313"
+  default     = "davincibot-377306"
 }
 
 variable "region" {
@@ -10,10 +10,10 @@ variable "region" {
 
 variable "function_name" {
   description = "my function name"
-  default     = "davincibot"
+  default     = "davinci-bot"
 }
 
 variable "env" {
   description = "select environment"
-  default = "dev"
+  default     = "dev"
 }
