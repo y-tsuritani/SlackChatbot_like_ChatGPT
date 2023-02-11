@@ -1,37 +1,53 @@
 import json
-from pprint import pprint
+import logging
+import os
 
 import functions_framework
-from flask import Flask, Request, jsonify
+from slack_bolt import App
+from slack_bolt.adapter.flask import SlackRequestHandler
+from box import Box
+
+logging.basicConfig(level=logging.DEBUG)
+
+slack_token = os.environ.get("SLACK_BOT_TOKEN")
+openai_api_key = os.environ.get("OPENAI_API_KEY")
+
+# process_before_response must be True when running on FaaS
+app = App(process_before_response=True)
+handler = SlackRequestHandler(app)
+
+
+@app.event("message")
+def message_channel(body, say, logger):
+    logger.info(body)
+    box = Box(body)
+    say(box.event.text)
+
+@app.event("app_mention")
+def handle_app_mention_events(body, say, logger):
+    logger.info(body)
+    box = Box(body)
+    say(box.event.text)
+
 
 
 @functions_framework.http
-def hello_http(request):
-    """HTTP Cloud Function.
-    Args:
-        request (flask.Request): The request object.
-        <https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data>
-    Returns:
-        The response text, or any set of values that can be turned into a
-        Response object using `make_response`
-        <https://flask.palletsprojects.com/en/1.1.x/api/#flask.make_response>.
-    """
-    request_json = request.get_json(silent=True)
-    request_args = request.args
+def echo_bot(request):
     header = request.headers
+    logging.debug(f"header: {header}")
+    body = request.get_json()
+    logging.debug(f"body: {body}")
 
-    print(f"header: {header}")
-    pprint(header)
+    # URL確認を通すとき
+    if body.get("type") == "url_verification":
+        logging.info("url verification started")
+        headers = {"Content-Type": "application/json"}
+        res = json.dumps({"challenge": body["challenge"]})
+        logging.debug(f"res: {res}")
+        return (res, 200, headers)
+    # 応答が遅いとSlackからリトライを受信してしまうため、リトライ時は処理しない
+    elif header.get("x-slack-retry-num"):
+        logging.info("slack retry received")
+        return {"statusCode": 200, "body": json.dumps({"message": "No need to resend"})}
 
-    if header.get("x-slack-retry-num"):
-        return jsonify({
-            "statusCode": 200,
-            "body": json.dumps({"message": "No need to resend"})
-        })
-    if request_json and "name" in request_json:
-        name = request_json["name"]
-    elif request_args and "name" in request_args:
-        name = request_args["name"]
-    else:
-        name = "World"
-    return "Hello {}!".format(name)
+    return handler.handle(request)
