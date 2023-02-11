@@ -3,3 +3,4 @@ openai == 0.26.4
 slack-bolt == 1.16.1
 google-cloud-logging == 3.5.0
 flask == 2.2.2
+python-box == 7.0.0
