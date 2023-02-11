@@ -1,13 +1,29 @@
-# Slackbot_ChatGPT
+## Slackbot_ChatGPT
 
-# A Short Description
+## A Short Description
 
-# The Getting Started Guide
+OpenAI API を利用して ChatGPT ライクな Slackbot を利用できます。
 
-# Tutorials
+## The Getting Started Guide
 
-# Sample Projects
+## Tutorials
 
-# API Documentation
+## Sample Projects
 
-# Architecture Documentation
+## API Documentation
+
+### Slack
+
+
+
+### GCP
+
+
+
+### OpenAI
+
+- [OpenAI API Reference](https://platform.openai.com/docs/api-reference/introduction)
+- [Authentication](https://platform.openai.com/docs/api-reference/authentication)
+- [Completions](https://platform.openai.com/docs/api-reference/completions)
+
+## Architecture Documentation
