@@ -7,8 +7,9 @@ import functions_framework
 import google.cloud.logging
 import openai
 from box import Box
-from slack_bolt import App
+from slack_bolt import App, context
 from slack_bolt.adapter.flask import SlackRequestHandler
+from flask import Request
 
 # Google Cloud Logging クライアント ライブラリを設定
 logging_client = google.cloud.logging.Client()
@@ -20,26 +21,24 @@ openai_api_key = os.environ.get("OPENAI_API_KEY")
 openai.api_key = openai_api_key
 
 # process_before_response must be True when running on FaaS
-app = App(process_before_response=True)
+app = App(token=slack_token, process_before_response=True)
 handler = SlackRequestHandler(app)
 
 
 # アプリにメンションしたイベントに対する応答
 @app.event("app_mention")
-def handle_app_mention_events(body, say, logger):
-    """_summary_
+def handle_app_mention_events(body: json, say: context.say.say.Say):
+    """アプリへのメンションに対する応答を生成する関数
 
     Args:
-        body (_type_): _description_
-        say (_type_): _description_
-        logger (_type_): _description_
+        body: HTTP リクエストのボディ
+        say: _description_
     """
-    logger.info(body)
+    logging.debug(type(body))
+    logging.debug(body)
     box = Box(body)
     user = box.event.user
-    logging.debug(user)
     text = box.event.text
-    logging.debug(text)
     only_text = re.sub("<@[a-zA-Z0-9]{11}>", "", text)
     logging.debug(only_text)
 
@@ -48,24 +47,24 @@ def handle_app_mention_events(body, say, logger):
     logging.debug(openai_response)
     logging.debug(f"total_tokens: {total_tokens}")
 
-    say(f"<@{user}>{openai_response}\n消費されたトークン:{total_tokens}")
+    say(f"<@{user}> {openai_response}\n消費されたトークン:{total_tokens}")
 
 
 def create_completion(text: str) -> str:
-    """_summary_
+    """OpenAI API を呼び出して、質問に対する回答を生成する関数
 
     Args:
-        text (str): _description_
+        text: bot アプリに対する質問内容
 
     Returns:
-        str: _description_
+        GPT-3 の生成した回答内容
     """
     # openai の GPT-3 モデルを使って、応答を生成する
     response = openai.Completion.create(
-        engine="text-davinci-003", # text-davinci-003 を指定すると最も自然な文章が生成されます
+        engine="text-davinci-003",  # text-davinci-003 を指定すると最も自然な文章が生成されます
         prompt=text,
-        max_tokens=256,  # 生成する応答の長さ 大きいと詳細な回答が得られますが、多くのトークンを消費します
-        temperature=0.5, # 生成する応答の多様性
+        max_tokens=1024,  # 生成する応答の長さ 大きいと詳細な回答が得られますが、多くのトークンを消費します
+        temperature=0.5,  # 生成する応答の多様性
         n=1,
         stop=None,
         echo=False
@@ -77,14 +76,14 @@ def create_completion(text: str) -> str:
 
 
 @functions_framework.http
-def slack_bot(request):
-    """_summary_
+def slack_bot(request: Request) -> SlackRequestHandler:
+    """slack のイベントリクエストを受信して各処理を実行する関数
 
     Args:
-        request (_type_): _description_
+        request: Slack のイベントリクエスト
 
     Returns:
-        _type_: _description_
+        SlackRequestHandler への接続
     """
     header = request.headers
     logging.debug(f"header: {header}")
@@ -103,5 +102,5 @@ def slack_bot(request):
         logging.info("slack retry received")
         return {"statusCode": 200, "body": json.dumps({"message": "No need to resend"})}
 
-    # handler を呼び出す
+    # handler への接続
     return handler.handle(request)
