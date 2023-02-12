@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Environment suffix
-suffix = "dev"
-
-# GCS bucket name
-gcs_buckets = ("app-terraform-backend-state-${suffix}", "app-deploy-cloud-functions")
-
 # import service account
 terraform import google_service_account.func_service_account sa-name@davincibot-377306.iam.gserviceaccount.com
 
