@@ -8,7 +8,7 @@ import google.cloud.logging
 import openai
 from box import Box
 from slack_bolt import App, context
-from slack_bolt.adapter.flask import SlackRequestHandler
+from slack_bolt.adapter.google_cloud_functions import SlackRequestHandler
 from flask import Request
 
 # Google Cloud Logging クライアント ライブラリを設定

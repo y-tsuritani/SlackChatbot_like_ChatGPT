@@ -34,6 +34,15 @@ OAuth & Permissions で Bot User OAuth Token を発行する
 
 ![slack_OAuth_token](img/slack_outh_permissions.png)
 
+Scopes でアプリが持つ権限を設定する
+**Bot Token Scopes**
+
+- app_mentions:read
+- channels:history
+- chat:write
+- chat:write.customize
+- groups:history
+
 ### OpenAI API キーの取得
 
 [OpenAI の HP](https://platform.openai.com/) にアクセスして OpenAI API key を取得してください。
@@ -51,6 +60,13 @@ OAuth & Permissions で Bot User OAuth Token を発行する
 API キーは Secret Manager に登録して環境変数を参照する形で利用します。
 
 [公式ドキュメント：Cloud Functions でのシークレットの使用](https://cloud.google.com/functions/docs/configuring/secrets?hl=ja)
+
+
+Cloud Functions の呼び出し URL を Slack app に設定する
+
+![slack_event_url](img/slack_event_url.png)
+
+Subscribe to bot events で **app_mention** を設定
 
 ## その他各種チュートリアル
 
