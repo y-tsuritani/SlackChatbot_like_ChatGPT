@@ -27,7 +27,7 @@ handler = SlackRequestHandler(app)
 
 # アプリにメンションしたイベントに対する応答
 @app.event("app_mention")
-def handle_app_mention_events(body: json, say: context.say.say.Say):
+def handle_app_mention_events(body: dict, say: context.say.say.Say):
     """アプリへのメンションに対する応答を生成する関数
 
     Args:
