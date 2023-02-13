@@ -3,7 +3,8 @@ secret/secret.yaml
 *.json
 
 # vscode
-.vscode
+.vscode/
+.cspell/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
