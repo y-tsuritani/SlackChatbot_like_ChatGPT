@@ -61,7 +61,7 @@ resource "google_cloudfunctions2_function" "function" {
   # ソースコード、言語、エントリーポイントを指定
   build_config {
     runtime     = "python310"
-    entry_point = "handler"
+    entry_point = "slack_bot"
     source {
       storage_source {
         bucket = google_storage_bucket.src_cloud_functions.name
@@ -72,12 +72,12 @@ resource "google_cloudfunctions2_function" "function" {
   # 基本スペックの設定
   service_config {
     max_instance_count    = 10
-    available_memory      = "512Mi"
+    available_memory      = "256Mi"
     timeout_seconds       = 300
     service_account_email = google_service_account.func_service_account.email
     # environment_variables = yamldecode(file("../applications/env/.env.yaml"))
 
-      # secret managerから情報を取得
+    # secret managerから情報を取得
     secret_environment_variables {
       key        = "SLACK_SIGNING_SECRET"
       project_id = var.project_id

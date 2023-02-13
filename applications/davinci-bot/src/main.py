@@ -2,14 +2,15 @@ import json
 import logging
 import os
 import re
+from typing import Union
 
 import functions_framework
 import google.cloud.logging
 import openai
 from box import Box
+from flask import Request
 from slack_bolt import App, context
 from slack_bolt.adapter.google_cloud_functions import SlackRequestHandler
-from flask import Request
 
 # Google Cloud Logging クライアント ライブラリを設定
 logging_client = google.cloud.logging.Client()
@@ -43,14 +44,14 @@ def handle_app_mention_events(body: dict, say: context.say.say.Say):
     logging.debug(only_text)
 
     # OpenAI から AIモデルの回答を生成する
-    openai_response, total_tokens = create_completion(only_text)
+    (openai_response, total_tokens) = create_completion(only_text)
     logging.debug(openai_response)
     logging.debug(f"total_tokens: {total_tokens}")
 
     say(f"<@{user}> {openai_response}\n消費されたトークン:{total_tokens}")
 
 
-def create_completion(text: str) -> str:
+def create_completion(text: str) -> tuple[str, int]:
     """OpenAI API を呼び出して、質問に対する回答を生成する関数
 
     Args:
@@ -67,16 +68,16 @@ def create_completion(text: str) -> str:
         temperature=0.5,  # 生成する応答の多様性
         n=1,
         stop=None,
-        echo=False
+        echo=False,
     )
-    openai_response = response['choices'][0]['text']
-    total_tokens = response['usage']['total_tokens']
+    openai_response = response["choices"][0]["text"]
+    total_tokens = response["usage"]["total_tokens"]
     # 応答のテキスト部分を取り出して返す
-    return openai_response, total_tokens
+    return (openai_response, total_tokens)
 
 
 @functions_framework.http
-def slack_bot(request: Request) -> SlackRequestHandler:
+def slack_bot(request: Request):
     """slack のイベントリクエストを受信して各処理を実行する関数
 
     Args:
@@ -102,5 +103,5 @@ def slack_bot(request: Request) -> SlackRequestHandler:
         logging.info("slack retry received")
         return {"statusCode": 200, "body": json.dumps({"message": "No need to resend"})}
 
-    # handler への接続
+    # handler への接続 class: flask.wrappers.Response
     return handler.handle(request)
