@@ -65,7 +65,7 @@ def create_completion(text: str) -> tuple[str, int]:
         engine="text-davinci-003",  # text-davinci-003 を指定すると最も自然な文章が生成されます
         prompt=text,
         max_tokens=1024,  # 生成する応答の長さ 大きいと詳細な回答が得られますが、多くのトークンを消費します
-        temperature=0.5,  # 生成する応答の多様性
+        temperature=0.7,  # 生成する応答の多様性
         n=1,
         stop=None,
         echo=False,
