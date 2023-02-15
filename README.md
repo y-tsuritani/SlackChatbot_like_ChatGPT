@@ -61,7 +61,6 @@ API キーは Secret Manager に登録して環境変数を参照する形で利
 
 [公式ドキュメント：Cloud Functions でのシークレットの使用](https://cloud.google.com/functions/docs/configuring/secrets?hl=ja)
 
-
 Cloud Functions の呼び出し URL を Slack app に設定する
 
 ![slack_event_url](img/slack_event_url.png)
