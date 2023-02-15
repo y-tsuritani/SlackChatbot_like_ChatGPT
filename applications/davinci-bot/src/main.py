@@ -76,7 +76,6 @@ def create_completion(text: str) -> tuple[str, int]:
     return (openai_response, total_tokens)
 
 
-
 @functions_framework.http
 def slack_bot(request: Request):
     """slack のイベントリクエストを受信して各処理を実行する関数
