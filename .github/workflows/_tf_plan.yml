@@ -28,16 +28,16 @@ jobs:
       pull-requests: write
     steps:
       - name: authenticate to google cloud
-        uses: google-github-actions/auth@v0.4.0
+        uses: google-github-actions/auth@v1.0.0
         with:
           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.SERVICE_ACCOUNT }}
 
       - name: checkout
-        uses: actions/checkout@v2.1.0
+        uses: actions/checkout@v3.3.0
 
       - name: setup terraform
-        uses: hashicorp/setup-terraform@v1.2.5
+        uses: hashicorp/setup-terraform@v2.0.3
         with:
           terraform_version: ${{ inputs.TF_VERSION }}
 
