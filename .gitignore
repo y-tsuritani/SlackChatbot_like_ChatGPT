@@ -1,6 +1,6 @@
 # secret
 secret/secret.yaml
-*.json
+settings.json
 
 # vscode
 .vscode/

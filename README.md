@@ -75,6 +75,8 @@ Subscribe to bot events で **app_mention** を設定
 
 [Terraform Cloud Functions をデプロイするチュートリアル（第 2 世代）](https://cloud.google.com/functions/docs/tutorials/terraform?hl=ja)
 
+GitHub Actions を用いた CI/CD の実現
+
 ## API ドキュメント
 
 ### Slack
