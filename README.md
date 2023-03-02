@@ -90,8 +90,11 @@ GitHub Actions を用いた CI/CD の実現
 ### OpenAI API
 
 - [OpenAI API Reference](https://platform.openai.com/docs/api-reference/introduction)
+- [models](https://platform.openai.com/docs/models/gpt-3-5)
+- [pricing](https://openai.com/pricing#language-models)
 - [Authentication](https://platform.openai.com/docs/api-reference/authentication)
 - [Completions](https://platform.openai.com/docs/api-reference/completions)
+- [Chat](https://platform.openai.com/docs/api-reference/chat/create)
 
 ## Architecture Documentation
 
