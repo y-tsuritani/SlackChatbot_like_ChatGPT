@@ -33,7 +33,7 @@ def handle_app_mention_events(body: dict, say: context.say.say.Say):
 
     Args:
         body: HTTP リクエストのボディ
-        say: _description_
+        say: 返信内容を Slack に送信
     """
     logging.debug(type(body))
     logging.debug(body)
@@ -41,18 +41,19 @@ def handle_app_mention_events(body: dict, say: context.say.say.Say):
     user = box.event.user
     text = box.event.text
     only_text = re.sub("<@[a-zA-Z0-9]{11}>", "", text)
+    # TODO: 会話の履歴を参照する機能は未実装
     message = [{"role": "user", "content": only_text}]
     logging.debug(only_text)
 
     # OpenAI から AIモデルの回答を生成する
-    (openai_response, total_tokens) = create_completion(message)
+    (openai_response, total_tokens) = create_chat_completion(message)
     logging.debug(openai_response)
     logging.debug(f"total_tokens: {total_tokens}")
 
     say(f"<@{user}> {openai_response}\n消費されたトークン:{total_tokens}")
 
 
-def create_completion(messages: list) -> tuple[str, int]:
+def create_chat_completion(messages: list) -> tuple[str, int]:
     """OpenAI API を呼び出して、質問に対する回答を生成する関数
 
     Args:
