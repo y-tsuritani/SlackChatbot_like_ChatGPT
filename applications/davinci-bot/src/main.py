@@ -33,7 +33,7 @@ def handle_app_mention_events(body: dict, say: context.say.say.Say):
 
     Args:
         body: HTTP リクエストのボディ
-        say: _description_
+        say: 返信内容を Slack に送信
     """
     logging.debug(type(body))
     logging.debug(body)
@@ -41,36 +41,36 @@ def handle_app_mention_events(body: dict, say: context.say.say.Say):
     user = box.event.user
     text = box.event.text
     only_text = re.sub("<@[a-zA-Z0-9]{11}>", "", text)
+    # TODO: 会話の履歴を参照する機能は未実装
+    message = [{"role": "user", "content": only_text}]
     logging.debug(only_text)
 
     # OpenAI から AIモデルの回答を生成する
-    (openai_response, total_tokens) = create_completion(only_text)
+    (openai_response, total_tokens) = create_chat_completion(message)
     logging.debug(openai_response)
     logging.debug(f"total_tokens: {total_tokens}")
 
     say(f"<@{user}> {openai_response}\n消費されたトークン:{total_tokens}")
 
 
-def create_completion(text: str) -> tuple[str, int]:
+def create_chat_completion(messages: list) -> tuple[str, int]:
     """OpenAI API を呼び出して、質問に対する回答を生成する関数
 
     Args:
-        text: bot アプリに対する質問内容
+        messages: チャット内容のリスト
 
     Returns:
-        GPT-3 の生成した回答内容
+        GPT-3.5 の生成した回答内容
     """
     # openai の GPT-3 モデルを使って、応答を生成する
-    response = openai.Completion.create(
-        engine="text-davinci-003",  # text-davinci-003 を指定すると最も自然な文章が生成されます
-        prompt=text,
-        max_tokens=1024,  # 生成する応答の長さ 大きいと詳細な回答が得られますが、多くのトークンを消費します
-        temperature=0.7,  # 生成する応答の多様性
-        n=1,
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",  # gpt-3.5-turbo を指定すると ChatGPT に近い文章が生成されます
+        messages=messages,
+        # TODO: max_tokens を指定すると token over になる
+        # max_tokens=4096,  # 生成する応答の長さ 大きいと詳細な回答が得られますが、多くのトークンを消費します
         stop=None,
-        echo=False,
     )
-    openai_response = response["choices"][0]["text"]
+    openai_response = response["choices"][0]["message"]["content"]
     total_tokens = response["usage"]["total_tokens"]
     # 応答のテキスト部分を取り出して返す
     return (openai_response, total_tokens)
